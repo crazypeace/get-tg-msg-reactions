@@ -1,6 +1,8 @@
 # get-tg-msg-reactions
 获取telegram群消息表情点赞的记录
 
+<img width="705" height="200" alt="image" src="https://github.com/user-attachments/assets/1cb3946a-f920-4e8e-b253-4b4037a062f6" />
+
 api_id, api_hash 需要自己申请  
 my.telegram.org  
 具体步骤不写了, 自己去问 google 和 gpt  
