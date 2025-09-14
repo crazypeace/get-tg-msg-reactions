@@ -23,7 +23,6 @@ python3 tg-get-msg-reactions.py
 
 ## 运行结果示例
 ```
-root@rn-TEST:~/tg-key-bot# python3 tg-get-msg-reactions.py 
 获取所有反应的用户：
 1. User: 372552030, Name: ㅤ, Reaction: 👏, Time: 2025-09-13 04:49:14
 2. User: dshowme, Name: dshow, Reaction: 👍, Time: 2025-09-13 03:07:23
