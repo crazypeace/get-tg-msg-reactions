@@ -1,5 +1,6 @@
 import asyncio
 import re
+import datetime
 from telethon import TelegramClient
 from telethon.tl.functions.messages import GetMessageReactionsListRequest
 from telethon.utils import get_display_name
@@ -22,7 +23,7 @@ def parse_tg_url(url: str):
         msg_id = int(m2.group(2))
         return username, msg_id
     
-async def get_all_reactions(chat_id: int, msg_id: int, api_id: str, api_hash: str) -> list:
+async def get_all_reactions(chat_id: int, msg_id: int, api_id: str, api_hash: str, cutoff_time:datetime) -> list:
     """
     获取消息的所有反应（不指定特定emoji）
     """
@@ -40,20 +41,22 @@ async def get_all_reactions(chat_id: int, msg_id: int, api_id: str, api_hash: st
             
             users_reactions = []
             for reaction in result.reactions:
-                try:
-                    user = await client.get_entity(reaction.peer_id)
-                    reaction_time = reaction.date.strftime('%Y-%m-%d %H:%M:%S')
-                    reaction_emoji_str = reaction.reaction.emoticon if hasattr(reaction.reaction, 'emoticon') else 'Unknown'
-                    display_name = get_display_name(user)
-                    users_reactions.append((
-                        user.username if getattr(user, 'username', None) else user.id,
-                        display_name,
-                        reaction_emoji_str,
-                        reaction_time
-                    ))
-                except Exception as e:
-                    print(f"Failed to get user for peer_id {reaction.peer_id}: {e}")
-                    continue
+                # 判断 reaction 时间是否早于截止时间
+                if reaction.date < cutoff_time:
+                    try:
+                        user = await client.get_entity(reaction.peer_id)
+                        reaction_time = reaction.date.strftime('%Y-%m-%d %H:%M:%S')
+                        reaction_emoji_str = reaction.reaction.emoticon if hasattr(reaction.reaction, 'emoticon') else 'Unknown'
+                        display_name = get_display_name(user)
+                        users_reactions.append((
+                            user.username if getattr(user, 'username', None) else user.id,
+                            display_name,
+                            reaction_emoji_str,
+                            reaction_time
+                        ))
+                    except Exception as e:
+                        print(f"Failed to get user for peer_id {reaction.peer_id}: {e}")
+                        continue
             return users_reactions
             
         except ChannelInvalidError:
@@ -71,11 +74,13 @@ async def main():
     api_hash = 'f9847f9847f9847f9847f9847f984747'
     url = 'https://t.me/c/1517821953/51108'
     # url = 'https://t.me/tg233boy/1206848'
+    # 设置截止时间
+    cutoff_time = datetime.datetime(2025, 9, 21, 8, 0, 0, tzinfo=datetime.timezone.utc)
     chat_id, msg_id = parse_tg_url(url)
 
-    # 获取所有反应
-    print("获取所有反应的用户：")
-    all_reactions = await get_all_reactions(chat_id, msg_id, api_id, api_hash)
+    # 获取截止时间前的所有反应
+    print(f'获取截止时间 {cutoff_time} 前的所有反应')
+    all_reactions = await get_all_reactions(chat_id, msg_id, api_id, api_hash, cutoff_time)
     if all_reactions:
         for idx, (user, display_name, reaction_emoji, timestamp) in enumerate(all_reactions, 1):
             print(f"{idx}. User: {user}, Name: {display_name}, Reaction: {reaction_emoji}, Time: {timestamp}")
