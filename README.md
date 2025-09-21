@@ -1,4 +1,4 @@
-# get-tg-msg-reactions
+# tg-get-msg-reactions
 获取telegram群消息表情点赞的记录
 
 <img width="705" height="200" alt="image" src="https://github.com/user-attachments/assets/1cb3946a-f920-4e8e-b253-4b4037a062f6" />
