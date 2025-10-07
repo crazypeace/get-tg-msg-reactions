@@ -27,7 +27,7 @@ async def get_all_reactions(chat_id: int, msg_id: int, api_id: str, api_hash: st
     """
     获取消息的所有反应（不指定特定emoji）
     """
-    async with TelegramClient('session2', api_id, api_hash) as client:
+    async with TelegramClient('session_tg-get-msg-reactions', api_id, api_hash) as client:
         try:
             entity = await client.get_entity(chat_id)
             peer = await client.get_input_entity(entity)
